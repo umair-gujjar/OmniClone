@@ -79,13 +79,13 @@ class Window(QMainWindow):
         hheader.setResizeMode(3, QHeaderView.Fixed)
         hheader.setResizeMode(4, QHeaderView.Fixed)
 
-        self.actionList.setHorizontalHeaderLabels(['action name', 'project', 'deferred', 'eT', 'due', 'c'])
+        self.actionList.setHorizontalHeaderLabels(['action name', 'project', 'defer', 'eT', 'due', 'c'])
 
-        self.actionList.setColumnWidth(1, 350)
-        self.actionList.setColumnWidth(2, 200)
-        self.actionList.setColumnWidth(3, 75)
-        self.actionList.setColumnWidth(4, 200)
-        self.actionList.setColumnWidth(5, 50)
+        self.actionList.setColumnWidth(1, int(self.actionList.frameGeometry().width()/875*350))
+        self.actionList.setColumnWidth(2, int(self.actionList.frameGeometry().width()/875*200))
+        self.actionList.setColumnWidth(3, int(self.actionList.frameGeometry().width()/875*75))
+        self.actionList.setColumnWidth(4, int(self.actionList.frameGeometry().width()/875*200))
+        self.actionList.setColumnWidth(5, int(self.actionList.frameGeometry().width()/875*50))
 
     def createFrameCalendar(self):
         self.calendar = QFrame(self.win)
