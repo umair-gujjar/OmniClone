@@ -1,14 +1,10 @@
 #!/usr/local/bin/python3.6
-from gui import *
-from ocObjects import *
-from saves import *
+import gui
+import saves
 
-# load objects from files into vars
-load_ocObjects()
+for file in ['actions.txt', 'events.txt', 'inbox.txt', 'projects.txt', 'tags.txt']:
+    saves.file_to_list(file)
 
-GUI = Window()
-
-# save objects from vars into files
-save_ocObjects()
+win = gui.Window()
 
 # + create backups periodically
