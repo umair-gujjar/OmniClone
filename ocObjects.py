@@ -1,35 +1,40 @@
-#!/usr/local/bin/python3.6
-
-actions = []
-inbox = []
-projects = []
-tags = []
-files = {'actions.txt': actions, 'inbox.txt': inbox, 'projects.txt': projects, 'tags.txt': tags}
-
-
-class Project:
+class Project():
     def __init__(self):
-        self.completed = False
-        self.title = ''
-        self.tags = []
-        self.deferUntil = ''
-        self.due = ''
-        self.estTime = ''
-        self.comment = ''
-        self.flagged = False
-        self.dateAdded = ''
-        self.dateChanged = ''
-        self.status = 'active'
-        # + add capability for on hold, active, paused and dropped projects
-        # + repeat settings
-        # + review settings
-        # + initialize displayNr (append as last item in displayed list)
+        self.comment        = ''
+        self.completed      = False
+        self.dateAdded      = ''
+        self.dateChanged    = ''
+        self.deferUntil     = ''
+        self.displayIndex   = 0
+        self.due            = ''
+        self.estTime        = ''
+        self.flagged        = False
+        self.status         = ''
+        self.tags           = []
+        self.title          = ''
+
+class Action():
+    def __init__(self):
+        self.comment        = ''
+        self.completed      = False
+        self.dateAdded      = ''
+        self.dateChanged    = ''
+        self.deferUntil     = ''
+        self.displayIndex   = 0
+        self.due            = ''
+        self.estTime        = ''
+        self.flagged        = False
+        self.project        = ''
+        self.status         = ''
+        self.tags           = []
+        self.title          = ''
 
 
-class Action(Project):
-    def __init__(self, project):
-        super(Action, self).__init__()
-        # actions without projects have inbox as their project
-        self.project = project
-
-# + add class CalendarEvent
+class Event():
+    def __init__(self):
+        self.comment        = ''
+        self.dateStart      = ''
+        self.dateEnd        = ''
+        self.project        = ''
+        self.tags           = []
+        self.title          = ''
