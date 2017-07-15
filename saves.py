@@ -1,42 +1,42 @@
-#!/usr/local/bin/python3.6
 import json
-from ocObjects import *
+import ocObjects
+
+projects    = []
+actions     = []
+events      = []
+inbox       = []
+tags        = []
 
 
-# saves objects in list to file
-def save_to_file(ocList, path):
-    file = open(path, 'w')
-    if path in ['actions.txt', 'inbox.txt', 'projects.txt']:
-        for item in ocList:
-            json_str = json.dumps(item.__dict__)			# convert data to encoded string
-            file.write(json_str + '\n')				# write encoded string to .txt
-    elif path in ['tags.txt']:
-        for item in ocList:
-            file.write(item + '\n')
-    else:
-        print('OC ERROR: Could not save file. Given PATH doesn\'t exist')
-    file.close()
+def list_to_file(filename):
+    with open(filename, 'r+') as fp:
+        fp.truncate()
+        if filename == 'projects.txt':
+            all_data = []
+            for p in projects:
+                project_data = []
+                for d in [p.comment, p.completed, p.dateAdded, p.dateChanged, p.deferUntil, p.displayIndex, p.due, p.estTime, p.flagged, p.status, p.tags, p.title]:
+                    project_data.append(d)
+                all_data.append(project_data)
+            json.dump(all_data, fp)
+        else:
+            None
 
 
-# loads objects from file into list
-def load_from_file(ocList, path):
-    file = open(path, 'r')
-    if path in ['actions.txt', 'inbox.txt', 'projects.txt']:
-        for line in file.readlines():
-            ocList.append(json.loads(line[0:-1]))			# load json from file into var
-    elif path in ['tags.txt']:
-        for line in file.readlines():
-            ocList.append(line[0:-1])
-    else:
-        print('OC ERROR: Could not load file. Given PATH doesn\'t exist')
-    file.close()
+def file_to_list(filename):
+    with open(filename, 'r') as fp:
+        a = json.load(fp)
+    print(a)
 
 
-def load_ocObjects():
-    for key in files.keys():
-        load_from_file(files[key], key)
 
+p1 = ocObjects.Project()
+p1.title = 'p1'
+projects.append(p1)
+p2 = ocObjects.Project()
+p2.title = 'p2'
+projects.append(p2)
 
-def save_ocObjects():
-    for key in files.keys():
-        save_to_file(files[key], key)
+#list_to_file('projects.txt')
+
+file_to_list('projects.txt')
