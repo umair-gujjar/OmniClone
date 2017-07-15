@@ -95,7 +95,7 @@ def file_to_list(filename):
             events = []
 
             for d in all_data:
-                a = ocObjects.Event()
+                e = ocObjects.Event()
 
                 e.comment       = d[0]
                 e.dateStart     = d[1]
@@ -104,7 +104,7 @@ def file_to_list(filename):
                 e.tags          = d[4]
                 e.title         = d[5]
 
-                actions.append(a)
+                actions.append(e)
 
 
         elif filename == 'inbox.txt':
@@ -116,19 +116,19 @@ def file_to_list(filename):
             for d in all_data:
                 a = ocObjects.Action()
 
-                a.comment = d[0]
-                a.completed = d[1]
-                a.dateAdded = d[2]
-                a.dateChanged = d[3]
-                a.deferUntil = d[4]
-                a.displayIndex = d[5]
-                a.due = d[6]
-                a.estTime = d[7]
-                a.flagged = d[8]
-                a.project = d[9]
-                a.status = d[10]
-                a.tags = d[11]
-                a.title = d[12]
+                a.comment       = d[0]
+                a.completed     = d[1]
+                a.dateAdded     = d[2]
+                a.dateChanged   = d[3]
+                a.deferUntil    = d[4]
+                a.displayIndex  = d[5]
+                a.due           = d[6]
+                a.estTime       = d[7]
+                a.flagged       = d[8]
+                a.project       = d[9]
+                a.status        = d[10]
+                a.tags          = d[11]
+                a.title         = d[12]
 
                 inbox.append(a)
 
