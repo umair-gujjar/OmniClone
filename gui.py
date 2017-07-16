@@ -1,3 +1,4 @@
+import ocObjects
 import saves
 import sys
 from PyQt4.QtCore import *
@@ -11,18 +12,18 @@ class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
 
-        self.screen_size = QSize()
-        self.win = QDialog()
-        self.gwindow = QGridLayout()
+        self.screen_size        = QSize()
+        self.win                = QDialog()
+        self.gwindow            = QGridLayout()
 
-        self.toolbar = QFrame(self.win)
-        self.selector = QFrame(self.win)
-        self.projectList = QTableWidget(len(saves.projects) + 1, 4)
-        self.projectInspector = QFrame(self.win)
-        self.actionList = QTableWidget(len(saves.actions) + 1, 6)
-        self.actionInspector = QFrame(self.win)
-        self.calendar = QFrame(self.win)
-        self.calendarInspector = QFrame(self.win)
+        self.toolbar            = QFrame(self.win)
+        self.selector           = QFrame(self.win)
+        self.projectList        = QTableWidget(len(saves.projects) + 1, 4)
+        self.projectInspector   = QFrame(self.win)
+        self.actionList         = QTableWidget(len(saves.actions) + 1, 6)
+        self.actionInspector    = QFrame(self.win)
+        self.calendar           = QFrame(self.win)
+        self.calendarInspector  = QFrame(self.win)
 
         self.widgets = [self.toolbar,
                         self.selector,
@@ -34,15 +35,15 @@ class Window(QMainWindow):
                         self.calendarInspector,
                         ]
 
-        self.bCalendar = QPushButton(self.selector)
-        self.bFlagged = QPushButton(self.selector)
-        self.bForecast = QPushButton(self.selector)
-        self.bInbox = QPushButton(self.selector)
-        self.bProjects = QPushButton(self.selector)
-        self.bReview = QPushButton(self.selector)
-        self.bTags = QPushButton(self.selector)
+        self.bCalendar  = QPushButton(self.selector)
+        self.bFlagged   = QPushButton(self.selector)
+        self.bForecast  = QPushButton(self.selector)
+        self.bInbox     = QPushButton(self.selector)
+        self.bProjects  = QPushButton(self.selector)
+        self.bReview    = QPushButton(self.selector)
+        self.bTags      = QPushButton(self.selector)
 
-        self.buttons = [self.bCalendar,
+        self.selector_buttons = [self.bCalendar,
                         self.bFlagged,
                         self.bForecast,
                         self.bInbox,
@@ -69,8 +70,8 @@ class Window(QMainWindow):
         self.createButtons()
         self.connectButtons()
         # + open up where you left off ( + save display args when quitting)
-        self.display(mainFrameMode='projects', inspectorMode='projects')
-        self.display(mainFrameMode='projects', inspectorMode='projects')
+        self.display('projects', 'projects')
+        self.display('projects', 'projects')
         sys.exit(app.exec_())
 
     def createWindow(self):
@@ -153,7 +154,7 @@ class Window(QMainWindow):
             w.setStyleSheet('background-color : ' + self.backgroundColor)
 
         i = 0
-        for b in self.buttons:
+        for b in self.selector_buttons:
             b.resize(self.selector.frameGeometry().width(), self.selector.frameGeometry().width())
             b.setText(['inbox', 'projects', 'tags', 'flagged', 'forecast', 'calendar', 'review'][i])
             b.move(0, (self.selector.frameGeometry().width()) * i)
@@ -183,10 +184,13 @@ class Window(QMainWindow):
                 pass
 
             elif mainFrameMode == 'projects':
+
                 while len(saves.projects) > self.projectList.rowCount():
                     self.projectList.insertRow(self.actionList.rowCount())
+
                 while len(saves.actions) > self.actionList.rowCount():
                     self.actionList.insertRow(self.actionList.rowCount())
+
                 """
                 i = 0
                 for p in sorted_projects('title'):
