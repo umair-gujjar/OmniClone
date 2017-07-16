@@ -1,4 +1,3 @@
-import ocObjects
 import saves
 import sys
 from PyQt4.QtCore import *
@@ -42,15 +41,17 @@ class Window(QMainWindow):
         self.bProjects  = QPushButton(self.selector)
         self.bReview    = QPushButton(self.selector)
         self.bTags      = QPushButton(self.selector)
+        self.bOther     = QPushButton(self.selector)
 
         self.selector_buttons = [self.bCalendar,
-                        self.bFlagged,
-                        self.bForecast,
-                        self.bInbox,
-                        self.bProjects,
-                        self.bReview,
-                        self.bTags
-                        ]
+                                 self.bFlagged,
+                                 self.bForecast,
+                                 self.bInbox,
+                                 self.bProjects,
+                                 self.bReview,
+                                 self.bTags,
+                                 self.bOther
+                                 ]
 
         self.backgroundColor = '#c5c9c7'
         self.phheader = self.projectList.horizontalHeader()
@@ -67,7 +68,6 @@ class Window(QMainWindow):
         self.createFrameActionInspector()
         self.createFrameCalendar()
         self.createFrameCalendarInspector()
-        self.createButtons()
         self.connectButtons()
         # + open up where you left off ( + save display args when quitting)
         self.display('projects', 'projects')
@@ -102,9 +102,9 @@ class Window(QMainWindow):
 
         self.projectList.setHorizontalHeaderLabels(['project name', 'ds', 'od', 's'])
 
-        self.projectList.setColumnWidth(1, 50)
-        self.projectList.setColumnWidth(2, 50)
-        self.projectList.setColumnWidth(3, 75)
+        self.projectList.setColumnWidth(1, 30)
+        self.projectList.setColumnWidth(2, 30)
+        self.projectList.setColumnWidth(3, 22)
 
         # + add dueSoon, overDue, status labels -> create function to determine these values
 
@@ -121,13 +121,13 @@ class Window(QMainWindow):
         self.ahheader.setResizeMode(3, QHeaderView.Fixed)
         self.ahheader.setResizeMode(4, QHeaderView.Fixed)
 
-        self.actionList.setHorizontalHeaderLabels(['action name', 'project', 'deferred', 'eT', 'due', 'c'])
+        self.actionList.setHorizontalHeaderLabels(['action name', 'project', 'defer', 'eT', 'due', 's'])
 
         self.actionList.setColumnWidth(1, int(self.actionList.frameGeometry().width() / 875 * 350))
-        self.actionList.setColumnWidth(2, int(self.actionList.frameGeometry().width() / 875 * 160))
-        self.actionList.setColumnWidth(3, int(self.actionList.frameGeometry().width() / 875 * 75))
-        self.actionList.setColumnWidth(4, int(self.actionList.frameGeometry().width() / 875 * 160))
-        self.actionList.setColumnWidth(5, int(self.actionList.frameGeometry().width() / 875 * 50))
+        self.actionList.setColumnWidth(2, int(self.actionList.frameGeometry().width() / 875 * 150))
+        self.actionList.setColumnWidth(3, int(self.actionList.frameGeometry().width() / 875 * 50))
+        self.actionList.setColumnWidth(4, int(self.actionList.frameGeometry().width() / 875 * 150))
+        self.actionList.setColumnWidth(5, int(self.actionList.frameGeometry().width() / 875 * 35))
 
     def createFrameActionInspector(self):
         # + add action information
@@ -141,31 +141,39 @@ class Window(QMainWindow):
         # + add CalendarEvent information
         pass
 
-    def createButtons(self):
-        pass
-
     def connectButtons(self):
         # + connect buttons to corresponding functions
         # + also connect table edit events to corresponding functions (e.g. when editing action dueDate)
-        pass
+        
+        # + maybe the following lambda values will have to be adjusted
+        self.bCalendar.clicked.connect(lambda: self.display('calendar', 'calendar'))
+        self.bFlagged.clicked.connect(lambda: self.display('flagged', 'actions'))
+        self.bForecast.clicked.connect(lambda: self.display('forecast', 'actions'))
+        self.bInbox.clicked.connect(lambda: self.display('inbox', 'actions'))
+        self.bProjects.clicked.connect(lambda: self.display('projects', 'projects'))
+        self.bReview.clicked.connect(lambda: self.display('review', 'actions'))
+        self.bTags.clicked.connect(lambda: self.display('tags', 'actions'))
+        self.bOther.clicked.connect(lambda: self.display('other', 'other'))
+        
+        # + if top row clicked -> change sorting_key_a & i & p (think about how to do display_index sorting correctly when having a project selected)
 
     def display(self, mainFrameMode, inspectorMode):
         for w in self.widgets:
             w.setStyleSheet('background-color : ' + self.backgroundColor)
 
-        i = 0
+        n = 0
         for b in self.selector_buttons:
             b.resize(self.selector.frameGeometry().width(), self.selector.frameGeometry().width())
-            b.setText(['inbox', 'projects', 'tags', 'flagged', 'forecast', 'calendar', 'review'][i])
-            b.move(0, (self.selector.frameGeometry().width()) * i)
-            i += 1
+            b.setText(['inbox', 'projects', 'tags', 'flagged', 'forecast', 'calendar', 'review', 'other'][n])
+            b.move(0, (self.selector.frameGeometry().width()) * n)
+            n += 1
         self.gwindow.addWidget(self.toolbar, 0, 0, 1, 34)
         self.gwindow.addWidget(self.selector, 2, 0, 18, 2)
 
         if mainFrameMode in ['calendar', 'inbox']:
             if mainFrameMode in ['calendar']:
                 self.gwindow.addWidget(self.calendar, 2, 2, 18, 25)
-                self.gwindow.addWidget(self.inspectorCal, 2, 27, 18, 7)
+                self.gwindow.addWidget(self.calendarInspector, 2, 27, 18, 7)
                 # + add calendar grid
                 # + add full calendar functionality
 
@@ -178,84 +186,119 @@ class Window(QMainWindow):
             self.gwindow.addWidget(self.actionList, 2, 10, 18, 17)
             self.gwindow.addWidget(self.actionInspector, 2, 27, 18, 7)
 
-            if mainFrameMode in ['forecast']:
+            if mainFrameMode in ['flagged']:
+                # + show project list with projects containing flagged items
+                pass
+
+            elif mainFrameMode in ['forecast']:
                 # + show small calendar view in projectList
                 # + display nextUp items
                 pass
 
             elif mainFrameMode == 'projects':
 
-                while len(saves.projects) > self.projectList.rowCount():
+                bool_project_selected       = False
+                index_project_selected      = 0 # + get selected cell via event
+
+                while len(saves.projects)   > self.projectList.rowCount():
                     self.projectList.insertRow(self.actionList.rowCount())
 
-                while len(saves.actions) > self.actionList.rowCount():
+                while len(saves.actions)    > self.actionList.rowCount():
                     self.actionList.insertRow(self.actionList.rowCount())
 
-                """
-                i = 0
-                for p in sorted_projects('title'):
-                    tTitle = QTableWidgetItem()
-                    tTitle.setText(p.title)
-                    self.projectList.setItem(i, 0, tTitle)
-                    i += 1
-                """
-                """
-                i = 0
-                for p in projects:
-                    while len(actions) > self.actionList.rowCount():
-                        self.actionList.insertRow(self.actionList.rowCount())
+                n = 0
+                for p in saves.projects:
+                    cell_due_soon           = QTableWidgetItem()
+                    cell_over_due           = QTableWidgetItem()
+                    cell_status             = QTableWidgetItem()
+                    cell_title              = QTableWidgetItem()
 
-                    # Display Project Title+Attributes
-                    tTitle = QTableWidgetItem()
-                    tTitle.setText(p.title)
-                    self.projectList.setItem(i, 0, tTitle)
-                    tDueSoon = QTableWidgetItem()
-                    # -implement due soon count
-                    tDueSoon.setText('')
-                    self.projectList.setItem(i, 2, tDueSoon)
-                    tOverDue = QTableWidgetItem()
-                    # -implement over due count
-                    tOverDue.setText('')
-                    self.projectList.setItem(i, 3, tOverDue)
-                    tStatus = QTableWidgetItem()
-                    if p.status == 'active':
-                        tStatus.setText('ACT')
-                    elif p.status == 'on hold':
-                        tStatus.setText('ONH')
-                    elif p.status == 'dropped':
-                        tStatus.setText('DRO')
-                    elif p.status == 'completed':
-                        tStatus.setText('COM')
-                    self.projectList.setItem(i, 3, tStatus)
-                    i += 1
-
-                i = 0
-                for a in actions:
-                    while len(actions) > self.actionList.rowCount():
-                        self.actionList.insertRow(self.actionList.rowCount())
-                    # Display Action Title+Attributes
-                    # tTitle = QTableWidgetItem()
-                    # tTitle.setText(a.title)
-                    self.actionList.setItem(i, 0, QTableWidgetItem(a.title))
-                    tProject = QTableWidgetItem()
-                    tProject.setText(a.project)
-                    self.actionList.setItem(i, 1, tProject)
-                    tDeferUntil = QTableWidgetItem()
-                    tDeferUntil.setText(a.deferUntil)
-                    self.actionList.setItem(i, 2, tDeferUntil)
-                    tDue = QTableWidgetItem()
-                    tDue.setText(a.due)
-                    self.actionList.setItem(i, 3, tDue)
-                    tEstTime = QTableWidgetItem()
-                    tEstTime.setText(a.estTime)
-                    self.actionList.setItem(i, 4, tEstTime)
-                    tCompleted = QTableWidgetItem()
-                    if a.completed is True:
-                        tCompleted.setText('x')
+                    cell_due_soon.setText(str(len(saves.due_soon)))
+                    cell_over_due.setText(str(len(saves.over_due)))
+                    if p.status             == 0:
+                        cell_status.setText('√')
+                    elif p.status           == 1:
+                        cell_status.setText('X')
+                    elif p.status           == 2:
+                        cell_status.setText('H')
                     else:
-                        tCompleted.setText('o')
-                    self.actionList.setItem(i, 5, tCompleted)
-                    i += 1"""
+                        print("ERROR: Invalid action status.")
+                    cell_title.setText(p.title)
+
+                    self.projectList.setItem(n, 1, cell_due_soon)
+                    self.projectList.setItem(n, 2, cell_over_due)
+                    self.projectList.setItem(n, 3, cell_status)
+                    self.projectList.setItem(n, 0, cell_title)
+                    n += 1
+
+                if not bool_project_selected:
+                    n                       = 0
+                    for a in saves.actions:
+                        cell_defer_until    = QTableWidgetItem()
+                        cell_due            = QTableWidgetItem()
+                        cell_est_time       = QTableWidgetItem()
+                        cell_project        = QTableWidgetItem()
+                        cell_status         = QTableWidgetItem()
+                        cell_title          = QTableWidgetItem()
+
+                        cell_defer_until.setText(a.defer_until)
+                        cell_due.setText(a.due)
+                        cell_est_time.setText(a.est_time)
+                        cell_project.setText(a.project)
+                        if a.status         == 0:
+                            cell_status.setText('H')
+                        elif a.status       == 1:
+                            cell_status.setText('X')
+                        elif a.status       == 2:
+                            cell_status.setText('√')
+                        else:
+                            print("ERROR: Invalid action status.")
+                        cell_title.setText(a.title)
+
+                        self.actionList.setItem(n, 0, cell_title)
+                        self.actionList.setItem(n, 1, cell_project)
+                        self.actionList.setItem(n, 2, cell_defer_until)
+                        self.actionList.setItem(n, 3, cell_est_time)
+                        self.actionList.setItem(n, 4, cell_due)
+                        self.actionList.setItem(n, 5, cell_status)
+                        n += 1
+                else:
+                    n = 0
+                    project_actions         = []
+                    for a in saves.actions:
+                        if a.project        == saves.sort_projects(saves.sorting_key_a)[index_project_selected]:
+                            project_actions.append(a)
+
+                    for a in project_actions:
+                        cell_defer_until    = QTableWidgetItem()
+                        cell_due            = QTableWidgetItem()
+                        cell_est_time       = QTableWidgetItem()
+                        cell_project        = QTableWidgetItem()
+                        cell_status         = QTableWidgetItem()
+                        cell_title          = QTableWidgetItem()
+
+                        cell_defer_until.setText(a.defer_until)
+                        cell_due.setText(a.due)
+                        cell_est_time.setText(a.est_time)
+                        cell_project.setText(a.project)
+                        if a.status         == 0:
+                            cell_status.setText('H')
+                        elif a.status       == 1:
+                            cell_status.setText('X')
+                        elif a.status       == 2:
+                            cell_status.setText('√')
+                        else:
+                            print("ERROR: Invalid action status.")
+                        cell_title.setText(a.title)
+
+                        self.actionList.setItem(n, 0, cell_title)
+                        self.actionList.setItem(n, 1, cell_project)
+                        self.actionList.setItem(n, 2, cell_defer_until)
+                        self.actionList.setItem(n, 3, cell_est_time)
+                        self.actionList.setItem(n, 4, cell_due)
+                        self.actionList.setItem(n, 5, cell_status)
+                        n += 1
+
 
             elif mainFrameMode in ['review']:
                 # + display projects to be reviewed in projectList
@@ -267,7 +310,13 @@ class Window(QMainWindow):
                 # display actions per tag
                 pass
 
-                # Display Object Attributes in Inspector
+            elif mainFrameMode in ['other']:
+                # placeholder, for now
+                pass
+
+            else:
+                print('ERROR: Invalid mainFrameMode passed to display(): ' + mainFrameMode)
+
             if inspectorMode in ['projects']:
                 # + display project info
                 pass
@@ -280,10 +329,14 @@ class Window(QMainWindow):
                 # + display action info
                 pass
 
+            elif inspectorMode in ['other']:
+                # placeholder, for now
+                pass
+
             else:
-                print('Error: Wrong inspectorMode passed to display()')
+                print('Error: Invalid inspectorMode passed to display(): ' + inspectorMode)
 
         # + save everytime display is called?
         self.win.show()
 
-        # + buttons methods
+        # + define button methods
